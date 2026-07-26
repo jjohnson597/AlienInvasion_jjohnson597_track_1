@@ -3,7 +3,7 @@ class Settings:
 
 
     def __init__(self):
-        self.name: str = "Alien Invasion"
+        self.name: str = "Alien Invasion: Side Strike - Track 1"
         self.screen_width = 1200
         self.screen_height = 800
         self.FPS = 60
