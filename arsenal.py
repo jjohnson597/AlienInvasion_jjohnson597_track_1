@@ -1,6 +1,7 @@
 import pygame
 from typing import TYPE_CHECKING
 from bullet import Bullet
+import bullet
 
 if TYPE_CHECKING:
     from alien_invasion import AlienInvasion
@@ -17,8 +18,11 @@ class Arsenal:
         self._remove_bullets_offscreen()
 
     def _remove_bullets_offscreen(self):
+        """Remove lasers that have traveled beyond the right edge."""
+        screen_rect = self.game.screen.get_rect()
+
         for bullet in self.arsenal.copy():
-            if bullet.rect.bottom <= 0:
+            if bullet.rect.left >= screen_rect.right:
                 self.arsenal.remove(bullet)
 
     def draw(self):

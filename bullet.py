@@ -13,15 +13,23 @@ class Bullet(Sprite):
         self.settings = game.settings
 
         self.image = pygame.image.load(self.settings.bullet_file)
-        self.image = pygame.transform.scale(self.image, (self.settings.bullet_width, self.settings.bullet_height))
+        self.image = pygame.transform.scale(
+            self.image,
+            (
+                self.settings.bullet_width,
+                self.settings.bullet_height
+            )
+        )
+        self.image = pygame.transform.rotate(self.image, -90)
         
         self.rect = self.image.get_rect()
-        self.rect.midtop = game.ship.rect.midtop
-        self.y = float(self.rect.y)
+        self.rect.midleft = game.ship.rect.midright
+        self.x = float(self.rect.x)
 
     def update(self):
-        self.y -= self.settings.bullet_speed
-        self.rect.y = self.y
+        """Move the laser horizontally toward the right side."""
+        self.x += self.settings.bullet_speed
+        self.rect.x = int(self.x)
 
     def draw_bullet(self):
         self.screen.blit(self.image, self.rect)

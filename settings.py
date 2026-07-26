@@ -39,8 +39,8 @@ class Settings:
         self.ship_speed = 5
         self.ship_limit = 3
 
-        self.bullet_width = 25
-        self.bullet_height = 80
+        self.bullet_width = 80
+        self.bullet_height = 25
         self.bullet_speed = 7
         self.bullet_amount = 5
 
