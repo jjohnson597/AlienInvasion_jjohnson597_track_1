@@ -136,8 +136,10 @@ class AlienInvasion:
         self.alien_fleet.aliens.empty()
         self.alien_fleet.create_fleet()
 
-        self.ship.rect.midbottom = self.ship.boundaries.midbottom
+        self.ship.rect.midleft = self.ship.boundaries.midleft
+        self.ship.rect.x += 20
         self.ship.x = float(self.ship.rect.x)
+        self.ship.y = float(self.ship.rect.y)
 
     def _update_screen(self):
         self.screen.blit(self.bg, (0, 0))
