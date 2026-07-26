@@ -1,151 +1,134 @@
+"""
+Program: Alien Invasion: Side Strike - Track 1
+Author: Jaylen Johnson
+Purpose: Creates, updates, draws, and manages waves of alien enemies
+that enter from the right side and travel toward the player's ship.
+Starter Code: Adapted from the Alien Invasion starter project:
+https://github.com/jjohnson597/alien_Invasion_starter3
+Date: 07/26/2026
+"""
+
 import pygame
-from typing import TYPE_CHECKING
 
 from alien import Alien
 
-if TYPE_CHECKING:
-    from alien_invasion import AlienInvasion
-
 
 class AlienFleet:
-    def __init__(self, game: "AlienInvasion"):
+    """Manage waves of alien enemies moving from right to left."""
+
+    def __init__(self, game):
+        """Initialize the alien group and create the first enemy wave."""
         self.game = game
+        self.screen = game.screen
         self.settings = game.settings
+        self.screen_rect = self.screen.get_rect()
 
         self.aliens = pygame.sprite.Group()
 
-        self.alien_direction = self.settings.alien_direction
-        self.alien_drop_speed = self.settings.alien_drop_speed
+        # A negative direction moves the aliens toward the left.
+        self.alien_direction = -1
 
         self.create_fleet()
 
     def create_fleet(self):
-        """Create the full fleet of aliens."""
-        alien_width = self.settings.alien_width
-        alien_height = self.settings.alien_height
-        screen_width = self.settings.screen_width
-        screen_height = self.settings.screen_height
+        """Create an alien formation near the right side of the screen."""
+        self.aliens.empty()
 
-        fleet_width, fleet_height = self.calculate_fleet_size(
-            alien_width,
-            alien_height,
-            screen_width,
-            screen_height
+        sample_alien = Alien(self, 0, 0)
+        alien_width = sample_alien.rect.width
+        alien_height = sample_alien.rect.height
+
+        # Keep the aliens below the score and high-score display.
+        top_margin = 100
+        bottom_margin = 40
+
+        vertical_spacing = alien_height * 2
+        horizontal_spacing = alien_width * 2
+
+        available_space_y = (
+            self.settings.screen_height
+            - top_margin
+            - bottom_margin
         )
 
-        x_offset, y_offset = self.calculate_fleet_offsets(
-            alien_width,
-            alien_height,
-            screen_width,
-            fleet_width,
-            fleet_height
+        number_rows = max(
+            1,
+            available_space_y // vertical_spacing
         )
 
-        for row in range(fleet_height):
-            for col in range(fleet_width):
-                if row % 2 == 0 or col % 2 == 0:
-                    continue
+        # Use a smaller formation so it enters from the right like a wave.
+        number_columns = 4
 
-                current_x = x_offset + (col * alien_width)
-                current_y = y_offset + (row * alien_height)
+        start_x = (
+            self.settings.screen_width
+            - alien_width
+            - 30
+        )
 
-                self._create_alien(current_x, current_y)
+        for column_number in range(number_columns):
+            for row_number in range(number_rows):
+                self._create_alien(
+                    column_number,
+                    row_number,
+                    start_x,
+                    top_margin,
+                    horizontal_spacing,
+                    vertical_spacing
+                )
 
-    def calculate_fleet_size(
-            self,
-            alien_width,
-            alien_height,
-            screen_width,
-            screen_height
+    def _create_alien(
+        self,
+        column_number,
+        row_number,
+        start_x,
+        top_margin,
+        horizontal_spacing,
+        vertical_spacing
     ):
-        """Calculate the fleet dimensions."""
-        fleet_width = screen_width // alien_width
+        """Create one alien at its assigned wave position."""
+        alien = Alien(self, 0, 0)
 
-        if fleet_width % 2 == 0:
-            fleet_width -= 1
-        else:
-            fleet_width -= 2
-
-        half_screen = screen_height // 2
-        fleet_height = half_screen // alien_height
-
-        if fleet_height % 2 == 0:
-            fleet_height -= 1
-        else:
-            fleet_height -= 2
-
-        return fleet_width, fleet_height
-
-    def calculate_fleet_offsets(
-            self,
-            alien_width,
-            alien_height,
-            screen_width,
-            fleet_width,
-            fleet_height
-    ):
-        """Calculate offsets that center the fleet."""
-        fleet_horizontal_spacing = fleet_width * alien_width
-        x_offset = (
-            screen_width - fleet_horizontal_spacing
-        ) // 2
-
-        fleet_vertical_spacing = fleet_height * alien_height
-        half_screen = self.settings.screen_height // 2
-        y_offset = (
-            half_screen - fleet_vertical_spacing
-        ) // 2
-
-        return x_offset, y_offset
-
-    def _create_alien(self, current_x, current_y):
-        """Create one alien and add it to the group."""
-        new_alien = Alien(
-            self,
-            current_x,
-            current_y
+        alien.x = (
+            start_x
+            - column_number * horizontal_spacing
         )
 
-        self.aliens.add(new_alien)
+        alien.y = (
+            top_margin
+            + row_number * vertical_spacing
+        )
+
+        alien.rect.x = int(alien.x)
+        alien.rect.y = int(alien.y)
+
+        self.aliens.add(alien)
 
     def update_fleet(self):
-        """Check edges and update every alien."""
-        self._check_fleet_edges()
+        """Move every alien continuously toward the left side."""
         self.aliens.update()
 
-    def _check_fleet_edges(self):
-        """Check whether any alien reached an edge."""
-        for alien in self.aliens:
-            if alien.check_edges():
-                self._drop_alien_fleet()
-                self.alien_direction *= -1
-                break
+    def draw(self):
+        """Draw every alien in the active wave."""
+        for alien in self.aliens.sprites():
+            alien.draw_alien()
 
-    def _drop_alien_fleet(self):
-        """Drop the entire fleet."""
-        for alien in self.aliens:
-            alien.y += self.alien_drop_speed
-            alien.rect.y = alien.y
-    
-    def check_collisions(self, other_group):
-        """Check collisions between aliens and another sprite group."""
-        return pygame.sprite.groupcollide(self.aliens, other_group, True, True)
+    def check_collisions(self, bullets):
+        """Return collisions between the player's lasers and aliens."""
+        return pygame.sprite.groupcollide(
+            bullets,
+            self.aliens,
+            True,
+            True
+        )
+
+    def check_destroyed_status(self):
+        """Return True when every alien in the wave is destroyed."""
+        return len(self.aliens) == 0
 
     def check_fleet_bottom(self):
-        """Return True if an alien reaches the bottom of the screen."""
-        screen_rect = self.game.screen.get_rect()
-
-        for alien in self.aliens:
-            if alien.rect.bottom >= screen_rect.bottom:
+        """Return True when an alien reaches the left side of the screen."""
+        for alien in self.aliens.sprites():
+            if alien.rect.left <= self.screen_rect.left:
                 return True
 
         return False
-
-    def check_destroyed_status(self):
-        """Return True if all aliens have been destroyed."""
-        return not self.aliens
-
-    def draw(self):
-        """Draw every alien."""
-        for alien in self.aliens:
-            alien.draw_alien()

@@ -1,3 +1,13 @@
+"""
+Program: Alien Invasion: Side Strike - Track 1
+Author: Jaylen Johnson
+Purpose: Defines an individual alien, including its image, position,
+horizontal movement, edge detection, and drawing behavior.
+Starter Code: Adapted from the Alien Invasion starter project:
+https://github.com/jjohnson597/alien_Invasion_starter3
+Date: 07/26/2026
+"""
+
 import pygame
 from pygame.sprite import Sprite
 from typing import TYPE_CHECKING
@@ -5,20 +15,37 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from alien_fleet import AlienFleet
 
+
 class Alien(Sprite):
-    def __init__(self, fleet: 'AlienFleet', x: float, y: float):
+    """Represent one alien belonging to the alien fleet."""
+
+    def __init__(
+        self,
+        fleet: "AlienFleet",
+        x: float,
+        y: float
+    ):
+        """Initialize the alien at the supplied screen coordinates."""
         super().__init__()
-    
+
         self.fleet = fleet
         self.screen = fleet.game.screen
         self.settings = fleet.game.settings
         self.boundaries = fleet.game.screen.get_rect()
 
-        self.image = pygame.image.load(self.settings.alien_file)
-        self.image = pygame.transform.scale(self.image, (self.settings.alien_width, self.settings.alien_height))
+        self.image = pygame.image.load(
+            self.settings.alien_file
+        )
+
+        self.image = pygame.transform.scale(
+            self.image,
+            (
+                self.settings.alien_width,
+                self.settings.alien_height
+            )
+        )
 
         self.rect = self.image.get_rect()
-
         self.rect.x = x
         self.rect.y = y
 
@@ -26,21 +53,24 @@ class Alien(Sprite):
         self.y = float(self.rect.y)
 
     def update(self):
-        """Move the alien horizontally."""
+        """Move the alien horizontally in the fleet's current direction."""
         self.x += (
             self.settings.alien_speed
             * self.fleet.alien_direction
         )
-        self.rect.x = self.x
-        # removed undefined `temp_speed` usage; horizontal movement already applied above
+
+        self.rect.x = int(self.x)
 
     def check_edges(self):
-        """Return True if the alien is at either screen edge."""
+        """Return True when the alien reaches either horizontal edge."""
         return (
-        self.rect.right >= self.boundaries.right
-        or self.rect.left <= self.boundaries.left
-    )
+            self.rect.right >= self.boundaries.right
+            or self.rect.left <= self.boundaries.left
+        )
 
     def draw_alien(self):
-        self.screen.blit(self.image, self.rect)
-        
+        """Draw the alien at its current position."""
+        self.screen.blit(
+            self.image,
+            self.rect
+        )
