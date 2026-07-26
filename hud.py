@@ -1,3 +1,13 @@
+"""
+Program: Alien Invasion: Side Strike - Track 1
+Author: Jaylen Johnson
+Purpose: Prepares and displays the player's score, high score, level,
+and remaining ships during gameplay.
+Starter Code: Adapted from the Alien Invasion starter project:
+https://github.com/jjohnson597/alien_Invasion_starter3
+Date: 07/26/2026
+"""
+
 import pygame
 from typing import TYPE_CHECKING
 
@@ -6,10 +16,10 @@ if TYPE_CHECKING:
 
 
 class HUD:
-    """Display game statistics on the screen."""
+    """Display game statistics and remaining lives on the screen."""
 
     def __init__(self, game: "AlienInvasion"):
-        """Initialize the HUD."""
+        """Initialize the HUD and prepare its images."""
         self.game = game
         self.screen = game.screen
         self.screen_rect = self.screen.get_rect()
@@ -43,8 +53,12 @@ class HUD:
         self.prep_level()
 
     def prep_score(self):
-        """Render the current score."""
-        rounded_score = round(self.stats.score, -1)
+        """Render and position the player's current score."""
+        rounded_score = round(
+            self.stats.score,
+            -1
+        )
+
         score_text = f"Score: {rounded_score:,}"
 
         self.score_image = self.font.render(
@@ -60,7 +74,7 @@ class HUD:
         )
 
     def prep_hi_score(self):
-        """Render the saved high score."""
+        """Render and position the saved high score."""
         rounded_hi_score = round(
             self.stats.hi_score,
             -1
@@ -86,7 +100,7 @@ class HUD:
         )
 
     def prep_level(self):
-        """Render the current level."""
+        """Render and position the player's current level."""
         level_text = f"Level: {self.stats.level}"
 
         self.level_image = self.font.render(
@@ -124,7 +138,7 @@ class HUD:
             )
 
     def draw(self):
-        """Draw the full HUD."""
+        """Draw the score, high score, level, and lives."""
         self.screen.blit(
             self.score_image,
             self.score_rect

@@ -1,3 +1,13 @@
+"""
+Program: Alien Invasion: Side Strike - Track 1
+Author: Jaylen Johnson
+Purpose: Tracks game statistics, including the player's remaining ships,
+current score, session maximum score, permanent high score, and level.
+Starter Code: Adapted from the Alien Invasion starter project:
+https://github.com/jjohnson597/alien_Invasion_starter3
+Date: 07/26/2026
+"""
+
 import json
 from typing import TYPE_CHECKING
 
@@ -6,14 +16,14 @@ if TYPE_CHECKING:
 
 
 class GameStats:
-    """Track statistics for Alien Invasion."""
+    """Track scoring, lives, levels, and saved high scores."""
 
     def __init__(self, game: "AlienInvasion"):
-        """Initialize statistics and load saved scores."""
+        """Initialize game statistics and load saved scores."""
         self.game = game
         self.settings = game.settings
 
-        # Highest score earned during this running session.
+        # Highest score earned during the current program session.
         self.max_score = 0
 
         self._init_saved_scores()
@@ -52,10 +62,12 @@ class GameStats:
                 parents=True,
                 exist_ok=True
             )
+
             self.path.write_text(
                 contents,
                 encoding="utf-8"
             )
+
         except OSError as error:
             print(f"Unable to save score: {error}")
 
@@ -66,7 +78,7 @@ class GameStats:
         self.level = 1
 
     def update(self, collisions):
-        """Update scoring after aliens are destroyed."""
+        """Update scoring after one or more aliens are destroyed."""
         self._update_score(collisions)
         self._update_max_score()
         self._update_hi_score()
@@ -80,7 +92,7 @@ class GameStats:
             )
 
     def _update_max_score(self):
-        """Track the best score during this game session."""
+        """Track the best score during the current program session."""
         if self.score > self.max_score:
             self.max_score = self.score
 
@@ -91,5 +103,5 @@ class GameStats:
             self.save_scores()
 
     def update_level(self):
-        """Advance to the next level."""
+        """Advance the player to the next level."""
         self.level += 1
