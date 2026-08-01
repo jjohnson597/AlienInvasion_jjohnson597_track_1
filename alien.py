@@ -5,7 +5,7 @@ Purpose: Defines an individual alien, including its image, position,
 horizontal movement, edge detection, and drawing behavior.
 Starter Code: Adapted from the Alien Invasion starter project:
 https://github.com/jjohnson597/alien_Invasion_starter3
-Date: 07/26/2026
+Date: 08/09/26
 """
 
 import pygame

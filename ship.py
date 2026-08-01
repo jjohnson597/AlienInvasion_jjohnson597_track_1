@@ -5,7 +5,7 @@ Purpose: Defines the player's ship, vertical movement, laser firing,
 drawing behavior, and collision detection.
 Starter Code: Adapted from the Alien Invasion starter project:
 https://github.com/jjohnson597/alien_Invasion_starter3
-Date: 07/26/2026
+Date: 08/09/26
 """
 
 import pygame
