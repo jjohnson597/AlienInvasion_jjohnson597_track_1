@@ -113,13 +113,25 @@ class AlienFleet:
             alien.draw_alien()
 
     def check_collisions(self, bullets):
-        """Return collisions between the player's lasers and aliens."""
-        return pygame.sprite.groupcollide(
-            bullets,
-            self.aliens,
-            True,
-            True
-        )
+        """Destroy at most one alien for each laser collision."""
+        collisions = {}
+
+        for bullet in bullets.sprites():
+            aliens_hit = pygame.sprite.spritecollide(
+                bullet,
+                self.aliens,
+                False
+            )
+
+            if aliens_hit:
+                alien_hit = aliens_hit[0]
+
+                bullet.kill()
+                alien_hit.kill()
+
+                collisions[bullet] = [alien_hit]
+
+        return collisions
 
     def check_destroyed_status(self):
         """Return True when every alien in the wave is destroyed."""
