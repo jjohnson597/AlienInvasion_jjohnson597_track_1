@@ -105,10 +105,10 @@ class AlienInvasion:
             self.hud.prep_hi_score()
 
         if self.alien_fleet.check_destroyed_status():
-            self._reset_level()
             self.settings.increase_difficulty()
             self.game_stats.update_level()
             self.hud.prep_level()
+            self._reset_level()
 
     def restart_game(self):
         """Reset the game and begin active gameplay."""
