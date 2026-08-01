@@ -89,7 +89,7 @@ class AlienInvasion:
         if self.ship.check_collisions(self.alien_fleet.aliens):
             self._check_game_status()
 
-        elif self.alien_fleet.check_fleet_bottom():
+        elif self.alien_fleet.check_fleet_left_edge():
             self._check_game_status()
 
         collisions = self.alien_fleet.check_collisions(

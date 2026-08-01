@@ -125,8 +125,8 @@ class AlienFleet:
         """Return True when every alien in the wave is destroyed."""
         return len(self.aliens) == 0
 
-    def check_fleet_bottom(self):
-        """Return True when an alien reaches the left side of the screen."""
+    def check_fleet_left_edge(self):
+        """Return True when an alien reaches the edge behind the ship."""
         for alien in self.aliens.sprites():
             if alien.rect.left <= self.screen_rect.left:
                 return True
