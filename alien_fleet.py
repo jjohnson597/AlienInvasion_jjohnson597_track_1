@@ -1,11 +1,11 @@
 """
 Program: Alien Invasion: Side Strike - Track 1
 Author: Jaylen Johnson
-Purpose: Creates, updates, draws, and manages waves of alien enemies
+Purpose: Creates, updates, draws, and manages changing alien formations
 that enter from the right side and travel toward the player's ship.
 Starter Code: Adapted from the Alien Invasion starter project:
 https://github.com/jjohnson597/alien_Invasion_starter3
-Date: 08/09/26
+Date: 08/09/2026
 """
 
 import pygame
@@ -14,7 +14,7 @@ from alien import Alien
 
 
 class AlienFleet:
-    """Manage waves of alien enemies moving from right to left."""
+    """Manage level-based alien waves moving from right to left."""
 
     def __init__(self, game):
         """Initialize the alien group and create the first enemy wave."""
@@ -25,39 +25,24 @@ class AlienFleet:
 
         self.aliens = pygame.sprite.Group()
 
-        # A negative direction moves the aliens toward the left.
+        # A negative direction moves aliens toward the player's side.
         self.alien_direction = -1
+        self.formation_name = "rectangle"
 
         self.create_fleet()
 
     def create_fleet(self):
-        """Create an alien formation near the right side of the screen."""
+        """Create a formation selected according to the current level."""
         self.aliens.empty()
 
         sample_alien = Alien(self, 0, 0)
         alien_width = sample_alien.rect.width
         alien_height = sample_alien.rect.height
 
-        # Keep the aliens below the score and high-score display.
-        top_margin = 100
-        bottom_margin = 40
+        formation_points = self._get_formation_points()
 
-        vertical_spacing = alien_height * 2
         horizontal_spacing = alien_width * 2
-
-        available_space_y = (
-            self.settings.screen_height
-            - top_margin
-            - bottom_margin
-        )
-
-        number_rows = max(
-            1,
-            available_space_y // vertical_spacing
-        )
-
-        # Use a smaller formation so it enters from the right like a wave.
-        number_columns = 4
+        vertical_spacing = alien_height * 2
 
         start_x = (
             self.settings.screen_width
@@ -65,27 +50,144 @@ class AlienFleet:
             - 30
         )
 
-        for column_number in range(number_columns):
-            for row_number in range(number_rows):
-                self._create_alien(
-                    column_number,
-                    row_number,
-                    start_x,
-                    top_margin,
-                    horizontal_spacing,
-                    vertical_spacing
-                )
+        top_margin = 100
+        bottom_margin = 40
+        available_height = (
+            self.settings.screen_height
+            - top_margin
+            - bottom_margin
+        )
+
+        highest_row = max(
+            row_number
+            for _, row_number in formation_points
+        )
+
+        formation_height = (
+            highest_row + 1
+        ) * vertical_spacing
+
+        start_y = (
+            top_margin
+            + max(
+                0,
+                (available_height - formation_height) // 2
+            )
+        )
+
+        for column_number, row_number in formation_points:
+            self._create_alien(
+                column_number,
+                row_number,
+                start_x,
+                start_y,
+                horizontal_spacing,
+                vertical_spacing
+            )
+
+    def _get_formation_points(self):
+        """Return coordinate points for the current level's formation."""
+        level = self.game.game_stats.level
+
+        formation_number = (level - 1) % 5
+
+        if formation_number == 0:
+            self.formation_name = "rectangle"
+            return self._rectangle_formation()
+
+        if formation_number == 1:
+            self.formation_name = "wedge"
+            return self._wedge_formation()
+
+        if formation_number == 2:
+            self.formation_name = "diamond"
+            return self._diamond_formation()
+
+        if formation_number == 3:
+            self.formation_name = "zigzag"
+            return self._zigzag_formation()
+
+        self.formation_name = "split_columns"
+        return self._split_column_formation()
+
+    def _rectangle_formation(self):
+        """Return points for a compact rectangular fleet."""
+        return [
+            (column, row)
+            for column in range(3)
+            for row in range(5)
+        ]
+
+    def _wedge_formation(self):
+        """Return points for a wedge-shaped fleet."""
+        return [
+            (0, 2),
+            (1, 1),
+            (1, 2),
+            (1, 3),
+            (2, 0),
+            (2, 1),
+            (2, 2),
+            (2, 3),
+            (2, 4)
+        ]
+
+    def _diamond_formation(self):
+        """Return points for a diamond-shaped fleet."""
+        return [
+            (0, 2),
+            (1, 1),
+            (1, 2),
+            (1, 3),
+            (2, 0),
+            (2, 1),
+            (2, 2),
+            (2, 3),
+            (2, 4),
+            (3, 1),
+            (3, 2),
+            (3, 3),
+            (4, 2)
+        ]
+
+    def _zigzag_formation(self):
+        """Return points for an angled zigzag fleet."""
+        return [
+            (0, 0),
+            (1, 1),
+            (2, 2),
+            (3, 3),
+            (4, 4),
+            (5, 3),
+            (6, 2),
+            (7, 1)
+        ]
+
+    def _split_column_formation(self):
+        """Return points for two separated enemy columns."""
+        return [
+            (0, 0),
+            (0, 1),
+            (0, 2),
+            (0, 3),
+            (0, 4),
+            (2, 0),
+            (2, 1),
+            (2, 2),
+            (2, 3),
+            (2, 4)
+        ]
 
     def _create_alien(
         self,
         column_number,
         row_number,
         start_x,
-        top_margin,
+        start_y,
         horizontal_spacing,
         vertical_spacing
     ):
-        """Create one alien at its assigned wave position."""
+        """Create one alien at its assigned formation position."""
         alien = Alien(self, 0, 0)
 
         alien.x = (
@@ -94,7 +196,7 @@ class AlienFleet:
         )
 
         alien.y = (
-            top_margin
+            start_y
             + row_number * vertical_spacing
         )
 
@@ -104,7 +206,7 @@ class AlienFleet:
         self.aliens.add(alien)
 
     def update_fleet(self):
-        """Move every alien continuously toward the left side."""
+        """Move every alien in the active formation."""
         self.aliens.update()
 
     def draw(self):
@@ -113,7 +215,7 @@ class AlienFleet:
             alien.draw_alien()
 
     def check_collisions(self, bullets):
-        """Destroy at most one alien for each laser collision."""
+        """Destroy no more than one alien for each laser."""
         collisions = {}
 
         for bullet in bullets.sprites():
