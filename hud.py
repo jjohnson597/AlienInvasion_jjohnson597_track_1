@@ -43,6 +43,9 @@ class HUD:
                 self.settings.ship_height // 2
             )
         )
+        self.life_image = pygame.transform.rotate(
+            self.life_image, -90
+        )
 
         self.prep_images()
 

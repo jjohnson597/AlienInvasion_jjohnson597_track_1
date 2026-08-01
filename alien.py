@@ -44,6 +44,7 @@ class Alien(Sprite):
                 self.settings.alien_height
             )
         )
+        self.image = pygame.transform.rotate(self.image, -90)
 
         self.rect = self.image.get_rect()
         self.rect.x = x
