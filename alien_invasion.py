@@ -150,14 +150,14 @@ class AlienInvasion:
         self.ship.y = float(self.ship.rect.y)
 
     def _update_screen(self):
-        """Draw the background, game objects, HUD, and Play button."""
+        """Draw the active game or the inactive Play screen."""
         self.screen.blit(self.bg, (0, 0))
 
-        self.ship.draw()
-        self.alien_fleet.draw()
-        self.hud.draw()
-
-        if not self.game_active:
+        if self.game_active:
+            self.ship.draw()
+            self.alien_fleet.draw()
+            self.hud.draw()
+        else:
             self.play_button.draw()
             pygame.mouse.set_visible(True)
 
