@@ -27,6 +27,10 @@ class AlienFleet:
 
         # A negative direction moves aliens toward the player's side.
         self.alien_direction = -1
+        # Controls the fleet's synchronized vertical movement.
+        self.vertical_direction = 1
+        self.top_margin = 100
+        self.bottom_margin = 40
         self.formation_name = "rectangle"
 
         self.create_fleet()
@@ -206,8 +210,49 @@ class AlienFleet:
         self.aliens.add(alien)
 
     def update_fleet(self):
-        """Move every alien in the active formation."""
+        """Move the fleet left while oscillating vertically."""
+        self._check_vertical_edges()
+        self._update_vertical_positions()
         self.aliens.update()
+
+    def _check_vertical_edges(self):
+        """Reverse vertical movement when the fleet reaches a boundary."""
+        if not self.aliens:
+            return
+
+        fleet_top = min(
+            alien.rect.top
+            for alien in self.aliens.sprites()
+        )
+
+        fleet_bottom = max(
+            alien.rect.bottom
+            for alien in self.aliens.sprites()
+        )
+
+        if (
+            fleet_top <= self.top_margin
+            and self.vertical_direction < 0
+        ):
+            self.vertical_direction = 1
+
+        elif (
+            fleet_bottom
+            >= self.screen_rect.bottom - self.bottom_margin
+            and self.vertical_direction > 0
+        ):
+            self.vertical_direction = -1
+
+    def _update_vertical_positions(self):
+        """Move every alien vertically in the fleet's current direction."""
+        vertical_change = (
+            self.settings.alien_vertical_speed
+            * self.vertical_direction
+        )
+
+        for alien in self.aliens.sprites():
+            alien.y += vertical_change
+            alien.rect.y = int(alien.y)    
 
     def draw(self):
         """Draw every alien in the active wave."""

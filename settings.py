@@ -105,12 +105,14 @@ class Settings:
         self.bullet_amount = 5
 
         self.alien_speed = 1
+        self.alien_vertical_speed = 1.5
         self.alien_drop_speed = 40
         self.alien_points = 50
 
     def increase_difficulty(self):
         """Increase speed and point values after completing a level."""
         self.ship_speed *= self.difficulty_scale
+        self.alien_vertical_speed *= self.difficulty_scale
         self.bullet_speed *= self.difficulty_scale
         self.alien_speed *= self.difficulty_scale
         self.alien_points = int(
