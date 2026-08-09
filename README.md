@@ -1,6 +1,6 @@
 # Alien Invasion: Side Strike - Track 1
-
-## Project Overview
+## Video Link: (Coming Soon)
+### Project Overview
 
 Alien Invasion: Side Strike is a side scrolling arcade shooter created by modifying and expanding the Alien Invasion starter project.
 
@@ -10,11 +10,9 @@ and fires horizontal laser projectiles at alien formations approaching from the 
 
 As the player advances through levels, the alien fleet changes formation and increases in speed and movement difficulty.
 
-## Track
-
 Track 1 - Custom Game Mechanics
 
-## Features
+### Features
 
 - Side-scrolling gameplay
 - Player ship positioned on the left side of the screen
@@ -32,7 +30,7 @@ Track 1 - Custom Game Mechanics
 - Play button and game-over state
 - High score saved using JSON
 
-## Alien Formations
+### Alien Formations
 
 The alien fleet changes formation as the player progresses through the game.
 
@@ -44,7 +42,7 @@ The alien fleet changes formation as the player progresses through the game.
 
 The formation cycle repeats on later levels while enemy speed and difficulty continue to increase.
 
-## Controls
+### Controls
 
 - Up Arrow: Move ship upward
 - Down Arrow: Move ship downward
@@ -52,7 +50,7 @@ The formation cycle repeats on later levels while enemy speed and difficulty con
 - Q: Quit the game
 - Mouse: Click the Play button
 
-## Installation
+### Installation
 
 Python and Pygame are required.
 
