@@ -47,8 +47,8 @@ class Alien(Sprite):
         self.image = pygame.transform.rotate(self.image, -90)
 
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = int(x)
+        self.rect.y = int(y)
 
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
